@@ -564,9 +564,9 @@ static void dissect_cie_list(tvbuff_t    *tvb,
         }
 
         if (cli_prot_len) {
-            if (cli_prot_len == 4)
+            if (cli_prot_len == 4 && hdr->ar_afn != AFNUM_INET6)
                 proto_tree_add_item(cie_tree, hf_nhrp_client_prot_addr, tvb, offset, 4, ENC_BIG_ENDIAN);
-            else if (cli_prot_len == 16){
+            else if (cli_prot_len == 16 && hdr->ar_afn == AFNUM_INET6){
                 proto_tree_add_item(cie_tree, hf_nhrp_client_prot_addr_v6, tvb, offset, 16, ENC_NA);
             }else{
                 proto_tree_add_item(cie_tree, hf_nhrp_client_prot_addr_bytes, tvb, offset, cli_prot_len, ENC_NA);
@@ -740,11 +740,11 @@ static void dissect_nhrp_mand(tvbuff_t    *tvb,
         offset += ssl;
     }
 
-    if (*srcLen == 4) {
+    if (*srcLen == 4 && hdr->ar_afn != AFNUM_INET6) {
         proto_tree_add_item(nhrp_tree, hf_nhrp_src_prot_addr, tvb, offset, 4, ENC_BIG_ENDIAN);
         offset += 4;
     }
-    else if (*srcLen == 16) {
+    else if (*srcLen == 16 && hdr->ar_afn == AFNUM_INET6) {
         proto_tree_add_item(nhrp_tree, hf_nhrp_src_prot_addr_v6, tvb, offset, *srcLen, ENC_NA);
         offset += 16;
     }
@@ -753,11 +753,11 @@ static void dissect_nhrp_mand(tvbuff_t    *tvb,
         offset += *srcLen;
     }
 
-    if (dstLen == 4) {
+    if (dstLen == 4 && hdr->ar_afn != AFNUM_INET6) {
         proto_tree_add_item(nhrp_tree, hf_nhrp_dst_prot_addr, tvb, offset, 4, ENC_BIG_ENDIAN);
         offset += 4;
     }
-    else if (dstLen == 16) {
+    else if (dstLen == 16 && hdr->ar_afn == AFNUM_INET6) {
         proto_tree_add_item(nhrp_tree, hf_nhrp_dst_prot_addr_v6, tvb, offset, 4, ENC_NA);
         offset += 16;
     }
@@ -953,9 +953,9 @@ static void dissect_nhrp_ext(tvbuff_t    *tvb,
                     proto_tree_add_item(auth_tree, hf_nhrp_auth_ext_reserved, tvb, offset, 2, ENC_BIG_ENDIAN);
                     proto_tree_add_item_ret_uint(auth_tree, hf_nhrp_auth_ext_spi, tvb, offset + 2, 2, ENC_BIG_ENDIAN, &spi);
                     proto_item_append_text(auth_item, ": SPI=%u", spi);
-                    if (srcLen == 4)
+                    if (srcLen == 4 && hdr->ar_afn != AFNUM_INET6)
                         proto_tree_add_item(auth_tree, hf_nhrp_auth_ext_src_addr, tvb, offset + 4, 4, ENC_BIG_ENDIAN);
-                    else if (srcLen == 16) {
+                    else if (srcLen == 16 && hdr->ar_afn == AFNUM_INET6) {
                         proto_tree_add_item(auth_tree, hf_nhrp_auth_ext_src_addr_v6, tvb, offset + 4, 16, ENC_NA);
                     }
                     else if (srcLen) {
