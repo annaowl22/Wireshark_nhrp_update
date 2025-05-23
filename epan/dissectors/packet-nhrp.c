@@ -722,7 +722,7 @@ static void dissect_nhrp_mand(tvbuff_t    *tvb,
         
         case AFNUM_INET6:
             if (shl == 16)
-                proto_tree_add_item(nhrp_tree, hf_nhrp_src_nbma_addr_v6, tvb, offset, 16, ENC_NA)
+                proto_tree_add_item(nhrp_tree, hf_nhrp_src_nbma_addr_v6, tvb, offset, 16, ENC_NA);
             else {
                 proto_tree_add_item(nhrp_tree, hf_nhrp_src_nbma_addr_bytes, tvb, offset, shl, ENC_NA);
             }
